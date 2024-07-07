@@ -3,7 +3,8 @@ from menu_anak import menu_anak
 from chatbot.chatbot import main as chatbot
 import streamlit as st
 from search.search import main as search
-from nutrition.nutrition_check import main as nutrition_check
+from menu_nutrition import menu
+from Dashboard import  main as dashboard
 def main():
     with st.sidebar:
         selected = option_menu(
@@ -11,9 +12,9 @@ def main():
             options=['Home', 'Nutrition', 'Child', 'Consultaton', 'Search']
         )
     if selected == 'Home':
-        st.title("Home")
+        dashboard()
     if selected == 'Nutrition':
-        nutrition_check()
+        menu()
     if selected == 'Child':
         menu_anak()
     if selected == 'Consultaton':

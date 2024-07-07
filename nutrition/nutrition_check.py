@@ -19,7 +19,8 @@ def get_all_food_names():
 
 
 def main():
-    global selisih_gizi, total_nutrition
+    total_nutrition ={}
+    selisih_gizi= {}
     st.title('Cek Kebutuhan Gizi')
 
     # Fetch food names from the database
@@ -134,7 +135,7 @@ def main():
 
             with column_metric[i]:
                 st.metric(nutrient, round(total_nutrition[nutrient], 3), round(-selisih_gizi[nutrient], 3))
-        return age_group, total_nutrition, selisih_gizi
+    return total_nutrition, selisih_gizi
 
 if __name__ == "__main__":
     main()

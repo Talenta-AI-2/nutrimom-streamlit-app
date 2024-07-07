@@ -7,13 +7,14 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Text,
-    Float,
+    Float, and_,
 )
 from datetime import datetime, timezone, date
 import bcrypt
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship, Session
-from model.engine.Engine import Base
+from model.engine.Engine import Base,get_session,get_engine
+import pandas as pd
 
 
 class User(Base):
@@ -48,6 +49,7 @@ class Anak(Base):
     user = relationship("User", backref="anak")
     pertumbuhan = relationship("PertumbuhanAnak", back_populates="anak")
 
+
 class PertumbuhanAnak(Base):
     __tablename__ = "pertumbuhan_anak"
 
@@ -60,6 +62,7 @@ class PertumbuhanAnak(Base):
 
     # Define relationship to Anak
     anak = relationship("Anak", back_populates="pertumbuhan")
+
 
 class GiziHarianIbuHamil(Base):
     __tablename__ = "gizi_harian_ibu_hamil"
@@ -81,22 +84,98 @@ class GiziHarianIbuHamil(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
 
     user = relationship(User)
+def query_data_to_dataframe(user_id, start_date, end_date):
+    # Create SQLAlchemy engine and session
+    engine = get_engine()
+    session = get_session()
 
-def create_gizi_harian_ibu_hamil(db: Session, gizi_data: dict):
-    new_gizi = GiziHarianIbuHamil(**gizi_data)
+    try:
+        # Query data within the specified date range for the user
+        query = session.query(GiziHarianIbuHamil).filter(
+            and_(
+                GiziHarianIbuHamil.user_id == user_id,
+                GiziHarianIbuHamil.created_at.between(start_date, end_date)
+            )
+        ).all()
+
+        # If there are records, convert to DataFrame
+        if query:
+            data = []
+            for record in query:
+                data.append({
+                    'user_id': record.user_id,
+                    'created_at': record.created_at,
+                    'total_air': record.total_air,
+                    'total_energi': record.total_energi,
+                    'total_protein': record.total_protein,
+                    'total_lemak': record.total_lemak,
+                    'total_karbo': record.total_karbo,
+                    'total_serat': record.total_serat,
+                    'selisih_air': record.selisih_air,
+                    'selisih_energi': record.selisih_energi,
+                    'selisih_protein': record.selisih_protein,
+                    'selisih_lemak': record.selisih_lemak,
+                    'selisih_karbo': record.selisih_karbo,
+                    'selisih_serat': record.selisih_serat,
+                    'user_name': record.user.name  # Assuming 'User' model has a 'name' attribute
+                })
+
+            df = pd.DataFrame(data)
+            return df
+
+        else:
+            print("No data found for the specified date range and user.")
+            return pd.DataFrame()
+
+    finally:
+        # Close the session
+        session.close()
+def get_tinggi_badan_and_status_by_name(db: Session, name):
+    query = db.query(PertumbuhanAnak.tinggi_badan, PertumbuhanAnak.status_nutrisi, PertumbuhanAnak.created_at).join(PertumbuhanAnak.anak).filter(
+        Anak.name == name
+    )
+    results = query.all()
+    return results
+
+def create_gizi_harian_ibu_hamil(db: Session, total_gizi_data: dict, selisih_gizi: dict, user_id: int):
+    new_gizi = GiziHarianIbuHamil(
+        user_id=user_id,
+        total_air=total_gizi_data['Air'],
+        total_energi=total_gizi_data['Energi'],
+        total_protein = total_gizi_data['Protein'],
+        total_lemak = total_gizi_data['Lemak'],
+        total_karbo= total_gizi_data['Karbohidrat'],
+        total_serat = total_gizi_data['Serat'],
+
+        selisih_air=selisih_gizi['Air'],
+        selisih_energi=selisih_gizi['Energi'],
+        selisih_protein=selisih_gizi['Protein'],
+        selisih_lemak=selisih_gizi['Lemak'],
+        selisih_karbo=selisih_gizi['Karbohidrat'],
+        selisih_serat=selisih_gizi['Serat'],
+
+    )
     db.add(new_gizi)
     db.commit()
     db.refresh(new_gizi)
     return new_gizi
 
+def get_pertumbuhan_anak(db: Session, user_id):
+    return  db.query(PertumbuhanAnak).filter_by()
 def get_anak_by_user_id(db: Session, user_id):
     return db.query(Anak).filter_by(user_id=user_id).order_by(Anak.tanggal_lahir).all()
+
+
 def get_tanggal_lahir_by_name(db: Session, name):
     anak = db.query(Anak).filter_by(name=name).first()
     return anak.tanggal_lahir if anak else None
+
+
 def get_anak_id_by_name(db: Session, name: str):
     anak = db.query(Anak).filter_by(name=name).first()
     return anak.id if anak else None
+
+
 def create_pertumbuhan_anak(db: Session, anak_id: int, umur: int, tinggi_badan: str, status_nutrisi: str):
     new_pertumbuhan = PertumbuhanAnak(
         anak_id=anak_id,

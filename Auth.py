@@ -5,6 +5,7 @@ from streamlit_extras.switch_page_button import switch_page
 from utils.AuthCheck import validate_username, validate_password
 from main import main
 
+
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.username = ""
