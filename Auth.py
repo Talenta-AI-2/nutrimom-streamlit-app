@@ -4,6 +4,7 @@ from model.engine.Engine import get_session
 from streamlit_extras.switch_page_button import switch_page
 from utils.AuthCheck import validate_username, validate_password
 from main import main
+st.set_page_config(page_title='NutriMom', page_icon='asset/logo_new.png')
 
 
 if 'logged_in' not in st.session_state:

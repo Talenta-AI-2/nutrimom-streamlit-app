@@ -7,7 +7,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Text,
-    Float, and_,
+    Float, and_, func,
 )
 from datetime import datetime, timezone, date
 import bcrypt
@@ -84,52 +84,11 @@ class GiziHarianIbuHamil(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
 
     user = relationship(User)
-def query_data_to_dataframe(user_id, start_date, end_date):
-    # Create SQLAlchemy engine and session
-    engine = get_engine()
-    session = get_session()
+# def get_total_gizi(user_id, start_date, end_date):
+#     # Create SQLAlchemy engine and session
+#     engine = get_engine()
+#     session = get_session()
 
-    try:
-        # Query data within the specified date range for the user
-        query = session.query(GiziHarianIbuHamil).filter(
-            and_(
-                GiziHarianIbuHamil.user_id == user_id,
-                GiziHarianIbuHamil.created_at.between(start_date, end_date)
-            )
-        ).all()
-
-        # If there are records, convert to DataFrame
-        if query:
-            data = []
-            for record in query:
-                data.append({
-                    'user_id': record.user_id,
-                    'created_at': record.created_at,
-                    'total_air': record.total_air,
-                    'total_energi': record.total_energi,
-                    'total_protein': record.total_protein,
-                    'total_lemak': record.total_lemak,
-                    'total_karbo': record.total_karbo,
-                    'total_serat': record.total_serat,
-                    'selisih_air': record.selisih_air,
-                    'selisih_energi': record.selisih_energi,
-                    'selisih_protein': record.selisih_protein,
-                    'selisih_lemak': record.selisih_lemak,
-                    'selisih_karbo': record.selisih_karbo,
-                    'selisih_serat': record.selisih_serat,
-                    'user_name': record.user.name  # Assuming 'User' model has a 'name' attribute
-                })
-
-            df = pd.DataFrame(data)
-            return df
-
-        else:
-            print("No data found for the specified date range and user.")
-            return pd.DataFrame()
-
-    finally:
-        # Close the session
-        session.close()
 def get_tinggi_badan_and_status_by_name(db: Session, name):
     query = db.query(PertumbuhanAnak.tinggi_badan, PertumbuhanAnak.status_nutrisi, PertumbuhanAnak.created_at).join(PertumbuhanAnak.anak).filter(
         Anak.name == name

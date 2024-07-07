@@ -5,11 +5,17 @@ import streamlit as st
 from search.search import main as search
 from menu_nutrition import menu
 from Dashboard import  main as dashboard
+
+
+
 def main():
+    st.logo('asset/logo_new.png')
     with st.sidebar:
         selected = option_menu(
             menu_title='Nutrimom',
-            options=['Home', 'Nutrition', 'Child', 'Consultaton', 'Search']
+            options=['Home', 'Nutrition', 'Child', 'Consultaton', 'Search', 'Log Out'],
+            icons=['house-fill', 'fire', 'piggy-bank-fill', 'bi-chat-left-text-fill', 'bi-search-heart-fill', 'door-closed-fill'],
+            menu_icon="cast",
         )
     if selected == 'Home':
         dashboard()
@@ -21,3 +27,6 @@ def main():
         chatbot()
     if selected == 'Search':
         search()
+    if selected == 'Log Out':
+        st.session_state.logged_in = False
+        st.session_state.username = ""
