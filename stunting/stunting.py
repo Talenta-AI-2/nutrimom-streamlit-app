@@ -53,6 +53,7 @@ def call_azure_ml_service(age, gender, height):
 
 
 def get_nutrition_recommendations(age_in_months, result):
+
     recommendations = {
         "severely stunted": {
             (0, 5): {"Energi (kkal)": 550, "Protein (g)": 9, "Lemak Total (g)": 31, "Karbohidrat (g)": 59,
@@ -142,10 +143,14 @@ def main(umur):
                                 unsafe_allow_html=True)
 
                         recommendations = get_nutrition_recommendations(age, prediction)
+                        # st.write(recommendations)
                         st.subheader("Rekomendasi Gizi:")
                         recommendation_html = "<div style='background-color: black; padding: 10px;'>"
-                        for nutrient, value in recommendations.items():
-                            recommendation_html += f"<span style='color: white; font-size: 18px; font-weight: bold; padding-right: 100px;'>{nutrient}: {value}</span> &nbsp;&nbsp;&nbsp;"
+                        if umur>= 72:
+                            recommendation_html += f"<span style='color: white; font-size: 18px; font-weight: bold; padding-right: 100px;'>Segera temui dokter!</span> &nbsp;&nbsp;&nbsp;"
+                        else:
+                            for nutrient, value in recommendations.items():
+                                recommendation_html += f"<span style='color: white; font-size: 18px; font-weight: bold; padding-right: 100px;'>{nutrient}: {value}</span> &nbsp;&nbsp;&nbsp;"
                         recommendation_html += "</div>"
                         st.markdown(recommendation_html, unsafe_allow_html=True)
 
