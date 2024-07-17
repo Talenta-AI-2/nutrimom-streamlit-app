@@ -10,7 +10,8 @@ load_dotenv('.env')
 service_endpoint = os.getenv('ENDPOINT')
 index_name = os.getenv('INDEX')
 key = os.getenv('KEY')
-search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+
+search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(str(key)))
 
 
 def search_content(search_text):
