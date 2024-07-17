@@ -4,8 +4,8 @@ import json
 import os
 import ssl
 import time
-
-
+from dotenv import load_dotenv
+load_dotenv('.env')
 def allowSelfSignedHttps(allowed):
     if allowed and not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -31,8 +31,8 @@ def call_azure_ml_service(age, gender, height):
 
     body = str.encode(json.dumps(data))
 
-    url = 'https://mlw-automl-stuntingapps-urbln.southeastasia.inference.ml.azure.com/score'
-    api_key = 'yDFRU8UGOBG5JQK322kPwLGikiHkI9UQ'
+    url =  os.getenv('STUNTING_URL')
+    api_key = os.getenv('STUNTING_KEY')
 
     headers = {
         'Content-Type': 'application/json',

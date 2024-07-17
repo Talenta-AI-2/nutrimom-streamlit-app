@@ -53,7 +53,7 @@ def getAnak():
 
 
 def main():
-    st.html("<h1 style: 'text-align:center'>Selamat Datang Di NutriMom</h1>")
+    st.html("<h1 style: 'text-align:center'>Selamat Datang Di UmiMom</h1>")
     st.write("""
         ### Aplikasi Kesehatan untuk Ibu Hamil dan Balita
         Aplikasi ini untuk membantu mengatasi stunting dari masa kandungan sampai balita.

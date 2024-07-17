@@ -9,7 +9,7 @@ from Dashboard import  main as dashboard
 
 
 def main():
-    st.logo('asset/logo_new.png')
+    st.logo('asset/logo_1.png')
     with st.sidebar:
         selected = option_menu(
             menu_title='Nutrimom',
