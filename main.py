@@ -12,7 +12,7 @@ def main():
     st.logo('asset/logo_1.png')
     with st.sidebar:
         selected = option_menu(
-            menu_title='Nutrimom',
+            menu_title='Umimom',
             options=['Home', 'Nutrition', 'Child', 'Consultaton', 'Search', 'Log Out'],
             icons=['house-fill', 'fire', 'piggy-bank-fill', 'bi-chat-left-text-fill', 'bi-search-heart-fill', 'door-closed-fill'],
             menu_icon="cast",
