@@ -5,7 +5,7 @@ from streamlit_extras.switch_page_button import switch_page
 from utils.AuthCheck import validate_username, validate_password
 from main import main
 
-st.set_page_config(page_title='UmiMom', page_icon='asset/logo_2.png')
+# st.set_page_config(page_title='UmiMom', page_icon='asset/logo_2.png')
 
 
 if 'logged_in' not in st.session_state:
